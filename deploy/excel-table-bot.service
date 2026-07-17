@@ -1,0 +1,29 @@
+# excel-table-bot systemd unit (TEMPLATE — not installed by this repo).
+#
+# Install (Linux host):
+#   1. Edit User= and the WorkingDirectory/ExecStart paths below.
+#   2. Create .env (chmod 600) with the required keys (see .env.example):
+#      TELEGRAM_BOT_TOKEN_TABLE, OPENAI_API_KEY, TELEGRAM_CHAT_ID
+#      (REDIS_URL optional, defaults to redis://localhost:6379).
+#   3. cp deploy/excel-table-bot.service /etc/systemd/system/
+#   4. systemctl daemon-reload && systemctl enable --now excel-table-bot
+#
+# Verify config before enabling:  uv run python -m excel --check
+
+[Unit]
+Description=excel-table-bot (Telegram spreadsheet CRUD / reformat / compare)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=CHANGE_ME
+WorkingDirectory=/home/CHANGE_ME/excel-table-bot
+ExecStart=/home/CHANGE_ME/.local/bin/uv run python -m excel
+Restart=on-failure
+RestartSec=10
+# The process survives transient OpenAI/Telegram/openpyxl errors on its own
+# (core.errors resilience); Restart=on-failure only covers a hard exit (e.g. OOM).
+
+[Install]
+WantedBy=multi-user.target
