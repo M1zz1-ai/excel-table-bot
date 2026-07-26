@@ -1,0 +1,343 @@
+<title>excel-table-bot — the model decides, Python counts</title>
+<style>
+  :root{
+    --ground:#0E0A14; --raised:#171122; --rule:#2E2440; --ghost:#3A2E52;
+    --ink:#EDE6DA; --dim:#9B93A8;
+    --violet:#B57BFF; --ok:#6FD3A0; --warn:#E9A93C; --fail:#FF6B5E;
+    --halo:rgba(181,123,255,.55);
+    --serif: ui-serif,"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --sans: system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --logo:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAA4CAYAAABNGP5yAAACnUlEQVR4nO2Zv2uTQRjHv/dwiEgIIiWUDh1LkQwZpEMHh4yliH+AQwcRB3EQKQ6OUqSDQxERcXAQZ5HSsYhDh+IQJIh0dAiSSYI4iFhJyl2eNs/7Xu79kYhPPhDeey93z/OG+z7PPe8F+Ie4WJ0/7n8m6ZOgHIJyDL+5c317IL+nbzdP9ZeJ8zkJv9LvIyjHhlaFU9QKJdmX4Enxe++bKdo+QTkE5ZgsEmp3Wr79/vCNiZ3/tXvk2+8OXpo8IRgjd2k+QTkE5dgsk+oLjeHNCo7PhgOXOGextoQ0CfPQSpPttdWbhZXLBOWY0ICYJFMGXBVVe2EsVcXULgTlEJRjYwZLyS0kwbzwhCv5l/qk2iIJgnIIyjExg6X9t+wQkEiqM2Kk7yAoh/Af0VdobJVIUA5BOZYfOd1o3hspH0OSer3/ZKTP2Tlbyp56icqA5OtqfX3s+bNDUQGCciw/aW13WtFvfrcvLY70PWdS5eGw/2VvcG0ur40dIm5Okq/PwjPxsOW1gVQ/EJRjpM6YvfRy55Nvr8/Nn1yPDsWxTg181bu9jm87ZfBkx1fd2edsn6ulPl+oOiQoh6Acm9eAJEsOl7BLjo3lpu+rVRd820l/d2llaJ+FU8hXFgjKISjHhAbE7Aibv7qp3z+kSuLpbp/e75+D66M/P1LthDI/Z7YLlJ0EP7R3fbtyZSN17DDdyZzoA3gW8vnxVaaXIQmCcgjKsXkNtA7aI32N1bpvrwXCIsQek7vztYX7vu/urQe57BOUQ1COiRkcqgl2XjzGJAjJfvbXWAQGGZiWEopceQdBOQTl2LKlWjk/59tbO8P9W4LXD0WVuiEIyiEoxxRpLLQ7uPd9TtLZQNHZPgmCckzZDvKqosjVliAoh6b9ANPmLwdU5PQTDxqcAAAAAElFTkSuQmCC");
+    --mono: ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Cascadia Mono","DejaVu Sans Mono",monospace;
+  }
+  @media (prefers-color-scheme:light){
+    :root{--ground:#F4F0E8;--raised:#EAE4D8;--rule:#CFC6B6;--ghost:#D3CABB;
+      --ink:#1A1420;--dim:#6A6070;--violet:#6B3FBF;--ok:#1E7A52;--warn:#9A6410;--fail:#C2382C;--halo:rgba(107,63,191,.30);}
+  }
+  :root[data-theme="dark"]{--ground:#0E0A14;--raised:#171122;--rule:#2E2440;--ghost:#3A2E52;
+    --ink:#EDE6DA;--dim:#9B93A8;--violet:#B57BFF;--ok:#6FD3A0;--warn:#E9A93C;--fail:#FF6B5E;--halo:rgba(181,123,255,.55);}
+  :root[data-theme="light"]{--ground:#F4F0E8;--raised:#EAE4D8;--rule:#CFC6B6;--ghost:#D3CABB;
+    --ink:#1A1420;--dim:#6A6070;--violet:#6B3FBF;--ok:#1E7A52;--warn:#9A6410;--fail:#C2382C;--halo:rgba(107,63,191,.30);}
+
+  body{background:var(--ground);color:var(--ink);font-family:var(--sans);
+    font-size:1.0625rem;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  section{border-bottom:1px solid var(--rule);padding:104px 24px;
+    display:grid;grid-template-columns:88px minmax(0,62ch);gap:24px;
+    justify-content:center;align-content:start;}
+  .rail{font-family:var(--mono);font-size:.8125rem;text-transform:uppercase;
+    letter-spacing:.08em;color:var(--dim);line-height:1.5;}
+  .rail b{display:block;color:var(--violet);font-weight:400;}
+  .col{display:flex;flex-direction:column;gap:24px;min-width:0;}
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,6vw,3.4rem);
+    letter-spacing:-.015em;line-height:1.12;margin:0;text-wrap:balance;}
+  h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.6rem,4.4vw,2.4rem);
+    letter-spacing:-.015em;line-height:1.15;margin:0;text-wrap:balance;}
+  p{margin:0;max-width:62ch;}
+  .dim{color:var(--dim);}
+  .lede{font-size:1.1875rem;}
+  figure{margin:0;overflow-x:auto;}
+  svg{display:block;max-width:100%;height:auto;}
+  figcaption{font-family:var(--mono);font-size:.75rem;text-transform:uppercase;
+    letter-spacing:.08em;color:var(--dim);margin-top:12px;}
+  .msg{border:1px solid var(--rule);background:var(--raised);padding:16px;
+    font-family:var(--mono);font-size:.8125rem;line-height:1.7;}
+  .msg .hd{color:var(--fail);text-transform:uppercase;letter-spacing:.08em;}
+  .msg .ok{color:var(--ok);}
+  .refuse{display:flex;flex-direction:column;gap:16px;}
+  .refuse div{border-left:2px solid var(--violet);padding-left:16px;}
+  .refuse b{font-weight:600;}
+  .refuse p{color:var(--dim);margin-top:4px;}
+  .stack{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);}
+  .stack div{background:var(--raised);padding:12px 16px;
+    display:flex;justify-content:space-between;gap:16px;align-items:baseline;}
+  .stack span:last-child{font-family:var(--mono);font-size:.8125rem;color:var(--dim);
+    font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .note{font-family:var(--mono);font-size:.8125rem;color:var(--dim);
+    border:1px dashed var(--rule);padding:16px;}
+  a{color:var(--violet);}
+  .mono{font-family:var(--mono);font-size:.9em;}
+
+  /* Source art is 64x56. Every displayed size is an integer ratio of that
+     (32 = 1:2, 128 = 2:1) so pixelated rendering lands on whole pixels
+     instead of smearing the sprite. */
+  .mark{position:relative;display:block;width:32px;height:28px;flex:none;}
+  .mark::before{content:"";position:absolute;inset:-85%;border-radius:50%;opacity:.5;
+    background:radial-gradient(circle,var(--halo) 0%,transparent 70%);}
+  .mark::after{content:"";position:absolute;inset:0;
+    background:var(--logo) center/contain no-repeat;image-rendering:pixelated;}
+  .mark.big{width:128px;height:112px;}
+  .rail .mark{margin-bottom:14px;}
+    image-rendering:pixelated;opacity:.75;z-index:9;}
+  .ico{width:1em;height:1em;vertical-align:-.12em;margin-right:.45em;opacity:.8;}
+  @media (prefers-reduced-motion:no-preference){
+    section{animation:rise .32s ease-out both;}
+    @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .mark::before{animation:breathe 4.5s ease-in-out infinite;}
+    @keyframes breathe{0%,100%{opacity:.26;transform:scale(.88)}
+      50%{opacity:.72;transform:scale(1.12)}}
+  }
+  @media (max-width:640px){
+    section{grid-template-columns:minmax(0,1fr);padding:64px 20px;gap:16px;}
+    .rail{display:flex;gap:12px;align-items:center;}
+    .rail b{display:inline;}
+    .rail .mark{margin-bottom:0;}
+  }
+</style>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-tg" viewBox="0 0 24 24"><path fill="currentColor" d="M21.8 3.3 2.9 10.6c-1 .4-1 1.8 0 2.2l4.6 1.6 1.8 5.5c.3.9 1.4 1.1 2 .4l2.5-2.6 4.7 3.5c.7.5 1.7.1 1.9-.7l3.3-15.5c.2-1-.8-1.9-1.9-1.7ZM8.9 14.3l9.3-6.7-7.6 8.1-.3 3.2-1.4-4.6Z"/></symbol>
+<symbol id="i-nt" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.7" d="M3.6 4.4 15 3.2c.9-.1 1.4.1 1.9.6l3 2.6c.4.4.6.7.6 1.3v12c0 .8-.4 1.3-1.3 1.4L6.4 21.9c-.8.1-1.3-.1-1.8-.7l-2-2.6c-.4-.6-.6-1-.6-1.6V5.7c0-.7.3-1.2 1.6-1.3Z"/><path fill="currentColor" d="M8.2 8.3v7.2l1.5-.1V11l3.2 4.3 1.5-.1V8l-1.5.1v4.2L9.8 8.2l-1.6.1Z"/></symbol>
+<symbol id="i-py" viewBox="0 0 24 24"><path fill="currentColor" d="M11.9 1.5c-2.6 0-4.4.8-4.4 3v2.3h4.5v.8H5.7c-2.2 0-4.1 1.3-4.1 4.5s1.7 4.6 3.9 4.6h1.6v-2.8c0-2.4 2.1-4.5 4.5-4.5h4.5c2 0 3.6-1.6 3.6-3.6V4.5c0-1.9-1.6-2.6-3.6-2.9-1.4-.1-2.8-.1-4.2-.1Zm-2.4 2c.5 0 .9.4.9.9s-.4.9-.9.9-.9-.4-.9-.9.4-.9.9-.9Z"/><path fill="currentColor" opacity=".55" d="M12.1 22.5c2.6 0 4.4-.8 4.4-3v-2.3H12v-.8h6.3c2.2 0 4.1-1.3 4.1-4.5s-1.7-4.6-3.9-4.6h-1.6v2.8c0 2.4-2.1 4.5-4.5 4.5H7.9c-2 0-3.6 1.6-3.6 3.6v1.3c0 1.9 1.6 2.6 3.6 2.9 1.4.1 2.8.1 4.2.1Zm2.4-2c-.5 0-.9-.4-.9-.9s.4-.9.9-.9.9.4.9.9-.4.9-.9.9Z"/></symbol>
+<symbol id="i-cl" viewBox="0 0 24 24"><g stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 3.2v17.6M3.2 12h17.6M5.8 5.8l12.4 12.4M18.2 5.8 5.8 18.2"/></g></symbol>
+</defs></svg>
+
+<section>
+  <div class="rail"><b>00</b>excel-table-bot</div>
+  <div class="col">
+    <span class="mark big"></span>
+    <h1>A 3,000-row spreadsheet, and the model never reads a row.</h1>
+    <p class="lede">Ask it to total a column and it does not add the numbers up.
+    It calls a function that adds them up, and reports what came back. The file
+    can be 40 columns wide and the answer still costs one turn.</p>
+    <p class="dim">excel-table-bot is a Telegram assistant for spreadsheets: send a
+    file, talk to it, get it back. Everything a language model is good at —
+    understanding "merge these two price lists by article" — it does. Everything
+    it is bad at — arithmetic over three thousand rows — it delegates.</p>
+  </div>
+</section>
+
+<section>
+  <div class="rail"><span class="mark"></span><b>01</b>the collapse</div>
+  <div class="col">
+    <h2>Thirteen nodes, one agent</h2>
+    <p class="dim">The predecessor was an n8n workflow: three hard-coded modes,
+    thirteen code nodes, and a redis state machine to remember which step of
+    which mode a chat was in. Adding a fourth thing you could ask meant a fourth
+    branch.</p>
+    <figure>
+      <svg viewBox="0 0 620 230" role="img" aria-label="Left: thirteen connected code nodes plus a redis state machine feeding three fixed modes. Right: one agent with seven tools and no state machine">
+        <g font-family="ui-monospace,monospace" font-size="9" fill="currentColor">
+          <text x="0" y="10" opacity=".6">BEFORE · n8n</text>
+          <text x="360" y="10" opacity=".6">AFTER · one tool-calling agent</text>
+        </g>
+        <g stroke="currentColor" stroke-width="1" fill="none" opacity=".55">
+          <rect x="0" y="24" width="40" height="18"/><rect x="48" y="24" width="40" height="18"/>
+          <rect x="96" y="24" width="40" height="18"/><rect x="144" y="24" width="40" height="18"/>
+          <rect x="0" y="50" width="40" height="18"/><rect x="48" y="50" width="40" height="18"/>
+          <rect x="96" y="50" width="40" height="18"/><rect x="144" y="50" width="40" height="18"/>
+          <rect x="0" y="76" width="40" height="18"/><rect x="48" y="76" width="40" height="18"/>
+          <rect x="96" y="76" width="40" height="18"/><rect x="144" y="76" width="40" height="18"/>
+          <rect x="0" y="102" width="40" height="18"/>
+        </g>
+        <g stroke="currentColor" stroke-width="1" fill="none" opacity=".3">
+          <path d="M40 33 L48 33 M88 33 L96 33 M136 33 L144 33 M20 42 L20 50 M68 42 L68 50
+                   M116 42 L116 50 M164 42 L164 50 M40 59 L48 59 M88 59 L96 59 M136 59 L144 59
+                   M20 68 L20 76 M68 68 L68 76 M116 68 L116 76 M164 68 L164 76
+                   M40 85 L48 85 M88 85 L96 85 M136 85 L136 85 M20 94 L20 102"/>
+        </g>
+        <rect x="0" y="136" width="184" height="22" fill="none" stroke="currentColor"
+          stroke-width="1" stroke-dasharray="3 3" opacity=".7"/>
+        <text x="8" y="151" font-family="ui-monospace,monospace" font-size="9"
+          fill="currentColor" opacity=".7">redis: which step, which mode</text>
+        <g font-family="ui-monospace,monospace" font-size="9" fill="currentColor" opacity=".55">
+          <text x="0" y="182">FIND</text><text x="64" y="182">REFORMAT</text><text x="144" y="182">COMPARE</text>
+          <text x="0" y="204" opacity=".8">a fourth question needs a fourth branch</text>
+        </g>
+
+        <rect x="360" y="24" width="176" height="34" fill="var(--raised)"
+          stroke="var(--violet)" stroke-width="2"/>
+        <text x="372" y="46" font-family="ui-monospace,monospace" font-size="10"
+          fill="var(--violet)">the agent IS the router</text>
+        <g stroke="currentColor" stroke-width="1" fill="var(--raised)" opacity=".9">
+          <rect x="360" y="76" width="84" height="17"/><rect x="452" y="76" width="84" height="17"/>
+          <rect x="360" y="99" width="84" height="17"/><rect x="452" y="99" width="84" height="17"/>
+          <rect x="360" y="122" width="84" height="17"/><rect x="452" y="122" width="84" height="17"/>
+          <rect x="360" y="145" width="176" height="17"/>
+        </g>
+        <g font-family="ui-monospace,monospace" font-size="8" fill="currentColor">
+          <text x="366" y="88">list_sheets</text><text x="458" y="88">read_range</text>
+          <text x="366" y="111">column_stats</text><text x="458" y="111">write_cell</text>
+          <text x="366" y="134">append_row</text><text x="458" y="134">write_row</text>
+          <text x="366" y="157">reformat &middot; compare wizards</text>
+        </g>
+        <text x="360" y="182" font-family="ui-monospace,monospace" font-size="9"
+          fill="currentColor" opacity=".55">no state machine · no modes</text>
+        <text x="360" y="204" font-family="ui-monospace,monospace" font-size="9"
+          fill="currentColor" opacity=".8">a fourth question needs no code</text>
+      </svg>
+      <figcaption>the state machine did not get smaller — it stopped existing</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="rail"><span class="mark"></span><b>02</b>the division</div>
+  <div class="col">
+    <h2>The model decides. Python counts.</h2>
+    <p class="dim">This is the whole discipline, and it is what keeps a wide file
+    usable. The agent chooses <em>which</em> range matters. It never sees the
+    rows in that range, so it cannot get tired, cannot lose a digit, and cannot
+    turn three thousand rows into three thousand tokens.</p>
+    <figure>
+      <svg viewBox="0 0 620 190" role="img" aria-label="A question reaches the agent, which calls column_stats on a range; deterministic Python reads all three thousand rows and returns one aggregate, and no row ever reaches the model">
+        <defs><marker id="ax" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+          <path d="M0 0 L7 3.5 L0 7 z" fill="currentColor"/></marker></defs>
+        <g font-family="ui-monospace,monospace" font-size="9" fill="currentColor">
+          <text x="0" y="12" opacity=".6">"what do the Q3 numbers add up to?"</text>
+
+          <rect x="0" y="26" width="150" height="34" fill="var(--raised)"
+            stroke="currentColor" stroke-width="1"/>
+          <text x="10" y="47">the agent</text>
+          <text x="0" y="76" opacity=".55">decides the range</text>
+
+          <rect x="234" y="26" width="150" height="34" fill="var(--raised)"
+            stroke="var(--violet)" stroke-width="2"/>
+          <text x="244" y="47" fill="var(--violet)">column_stats(D2:D3001)</text>
+
+          <rect x="470" y="26" width="150" height="34" fill="var(--raised)"
+            stroke="currentColor" stroke-width="1"/>
+          <text x="480" y="47">deterministic Python</text>
+          <text x="470" y="76" opacity=".55">reads all 3,000 rows</text>
+
+          <rect x="222" y="112" width="180" height="34" fill="var(--raised)"
+            stroke="currentColor" stroke-width="1"/>
+          <text x="232" y="133">sum · count · min · max · mean</text>
+          <text x="222" y="162" opacity=".55">one aggregate travels back</text>
+        </g>
+        <g stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#ax)" opacity=".8">
+          <path d="M150 43 L228 43"/><path d="M384 43 L464 43"/>
+          <path d="M545 60 L545 129 L408 129"/>
+        </g>
+        <line x1="0" y1="96" x2="620" y2="96" stroke="var(--rule)" stroke-width="1"/>
+        <text x="0" y="133" font-family="ui-monospace,monospace" font-size="10"
+          fill="currentColor">ROWS THAT REACH THE MODEL</text>
+        <text x="0" y="152" font-family="ui-monospace,monospace" font-size="22"
+          fill="var(--violet)">0</text>
+      </svg>
+      <figcaption>never LLM-per-row — that is the entire performance story</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="rail"><span class="mark"></span><b>03</b>the join</div>
+  <div class="col">
+    <h2>The model is the last resort, not the first</h2>
+    <p class="dim">Comparing two price lists means matching keys that humans typed
+    differently. Three tiers run in order, and each one only sees what the tier
+    above could not solve. The model is tier three — reached last, on the
+    smallest set, and never trusted on the way out.</p>
+    <figure>
+      <svg viewBox="0 0 620 210" role="img" aria-label="Keys pass through three tiers: exact match, then fuzzy match, then the model on whatever remains, with a validation gate that discards invented keys and reused matches">
+        <g font-family="ui-monospace,monospace" font-size="9" fill="currentColor">
+          <rect x="0" y="20" width="620" height="26" fill="var(--raised)" stroke="currentColor" stroke-width="1"/>
+          <text x="10" y="37">1 · EXACT — normalised, case and spacing folded</text>
+          <text x="470" y="37" opacity=".55">most of them</text>
+
+          <rect x="90" y="62" width="530" height="26" fill="var(--raised)" stroke="currentColor" stroke-width="1"/>
+          <text x="100" y="79">2 · FUZZY — typos, suffixes, transposed words</text>
+          <text x="470" y="79" opacity=".55">the leftovers</text>
+
+          <rect x="300" y="104" width="320" height="26" fill="var(--raised)"
+            stroke="var(--violet)" stroke-width="2"/>
+          <text x="310" y="121" fill="var(--violet)">3 · THE MODEL — only what is still unmatched</text>
+
+          <rect x="300" y="146" width="320" height="26" fill="none"
+            stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="310" y="163">validated: invented keys and reused rows dropped</text>
+
+          <text x="0" y="196" opacity=".6">EACH TIER ONLY SEES WHAT THE ONE ABOVE COULD NOT SOLVE</text>
+        </g>
+        <g stroke="currentColor" stroke-width="1" fill="none" opacity=".45">
+          <path d="M90 46 L90 62"/><path d="M300 88 L300 104"/><path d="M460 130 L460 146"/>
+        </g>
+      </svg>
+      <figcaption>width of each bar is the work left, not a measured count</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="rail"><span class="mark"></span><b>04</b>real files</div>
+  <div class="col">
+    <h2>Spreadsheets people actually send</h2>
+    <p class="dim">A real file does not start with a header. It starts with a
+    company name, an export date, a blank row, and then the header — sometimes
+    with gaps in it.</p>
+    <div class="stack">
+      <div><span>Header row</span><span>highest score in the first 20</span></div>
+      <div><span>Score</span><span>text cells x2 + unique cells</span></div>
+      <div><span>Sparse header</span><span>original column index kept</span></div>
+      <div><span>Total rows</span><span>detected, never summed twice</span></div>
+      <div><span>Accepted</span><span>xlsx xlsm xls csv tsv</span></div>
+    </div>
+    <p class="dim">Everything is normalised to one workbook object on load, so the
+    rest of the bot never learns that <span class="mono">.xls</span> exists. The
+    scoring heuristic is inherited from the n8n version — it was the one piece
+    worth carrying over unchanged.</p>
+  </div>
+</section>
+
+<section>
+  <div class="rail"><span class="mark"></span><b>05</b>the scar</div>
+  <div class="col">
+    <h2>The buttons that fell into the model</h2>
+    <p class="dim">The n8n original had a persistent keyboard: a help page and an
+    RU/ENG switch. The Python rewrite dropped it, and the buttons did not stop
+    working loudly — they stopped working quietly. A press became just another
+    sentence, and the CRUD agent did its best with "Помощь".</p>
+    <div class="msg">
+      <div class="hd">the failure mode</div>
+      <div>a button press is indistinguishable from a request</div>
+      <div class="ok">— the fix —</div>
+      <div>classify_button() runs first; a press never reaches the model</div>
+    </div>
+    <p class="dim">Worth writing down because it is the failure mode of every
+    agent front-end: once anything can be a prompt, everything becomes one. The
+    boundary has to be drawn on purpose, before the model is called.</p>
+  </div>
+</section>
+
+<section>
+  <div class="rail"><span class="mark"></span><b>06</b>staying up</div>
+  <div class="col">
+    <h2>One file per chat, and a restart nobody notices</h2>
+    <p class="dim">Each chat has at most one working file. Redis holds the path
+    and the reply filename — not the workbook, and not the conversation. The
+    heavy object stays on disk.</p>
+    <div class="stack">
+      <div><span>Per chat</span><span>one working workbook</span></div>
+      <div><span>In redis</span><span>the path, not the file</span></div>
+      <div><span>Redis unavailable</span><span>graceful no-op, bot stays up</span></div>
+      <div><span>Every turn</span><span>wrapped in run_resilient</span></div>
+      <div><span>A failed turn</span><span>logged and reported, never fatal</span></div>
+    </div>
+    <p class="dim">A transient OpenAI or file error ends that turn and nothing
+    else. The long-poll process is not something a bad spreadsheet gets to kill.</p>
+  </div>
+</section>
+
+<section>
+  <div class="rail"><span class="mark"></span><b>07</b>build</div>
+  <div class="col">
+    <h2>125 tests, zero network calls</h2>
+    <p class="dim">Telegram, OpenAI and the filesystem are all faked at the
+    boundary, so the suite runs green on a fresh clone with no accounts and no
+    secrets — including the row-by-row engines, which are pure functions and the
+    part most worth testing.</p>
+    <div class="stack">
+      <div><span><svg class="ico"><use href="#i-py"/></svg>Python 3.14 &middot; aiogram &middot; openpyxl</span><span>2,753 lines</span></div>
+      <div><span>OpenAI tool-calling</span><span>7 sheet tools</span></div>
+      <div><span><svg class="ico"><use href="#i-tg"/></svg>Telegram &middot; upload, talk, download</span><span>&mdash;</span></div>
+      <div><span>Suite</span><span>125 tests</span></div>
+      <div><span>Network calls under test</span><span>0</span></div>
+    </div>
+    <p class="note">Scope, honestly: this one you can actually run. It is not
+    wired to anybody's private workspace — it takes a file you send it, and the
+    only things you have to bring are a Telegram bot token and an OpenAI key.
+    That is the whole list.</p>
+  </div>
+</section>
+
+</body></html>

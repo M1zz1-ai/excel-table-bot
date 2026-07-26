@@ -1,0 +1,35 @@
+<svg viewBox="-16.0 -16.0 652.0 222.0" width="652.0" height="222.0" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A question reaches the agent, which calls column_stats on a range; deterministic Python reads all three thousand rows and returns one aggregate, and no row ever reaches the model"><rect x="-16.0" y="-16.0" width="652.0" height="222.0" fill="#0E0A14"/>
+        <defs><marker id="ax" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+          <path d="M0 0 L7 3.5 L0 7 z" fill="#EDE6DA"/></marker></defs>
+        <g font-family="ui-monospace,monospace" font-size="9" fill="#EDE6DA">
+          <text x="0" y="12" opacity=".6">"what do the Q3 numbers add up to?"</text>
+
+          <rect x="0" y="26" width="150" height="34" fill="#171122"
+            stroke="#EDE6DA" stroke-width="1"/>
+          <text x="10" y="47">the agent</text>
+          <text x="0" y="76" opacity=".55">decides the range</text>
+
+          <rect x="234" y="26" width="150" height="34" fill="#171122"
+            stroke="#B57BFF" stroke-width="2"/>
+          <text x="244" y="47" fill="#B57BFF">column_stats(D2:D3001)</text>
+
+          <rect x="470" y="26" width="150" height="34" fill="#171122"
+            stroke="#EDE6DA" stroke-width="1"/>
+          <text x="480" y="47">deterministic Python</text>
+          <text x="470" y="76" opacity=".55">reads all 3,000 rows</text>
+
+          <rect x="222" y="112" width="180" height="34" fill="#171122"
+            stroke="#EDE6DA" stroke-width="1"/>
+          <text x="232" y="133">sum · count · min · max · mean</text>
+          <text x="222" y="162" opacity=".55">one aggregate travels back</text>
+        </g>
+        <g stroke="#EDE6DA" stroke-width="1.5" fill="none" marker-end="url(#ax)" opacity=".8">
+          <path d="M150 43 L228 43"/><path d="M384 43 L464 43"/>
+          <path d="M545 60 L545 129 L408 129"/>
+        </g>
+        <line x1="0" y1="96" x2="620" y2="96" stroke="#2E2440" stroke-width="1"/>
+        <text x="0" y="133" font-family="ui-monospace,monospace" font-size="10"
+          fill="#EDE6DA">ROWS THAT REACH THE MODEL</text>
+        <text x="0" y="152" font-family="ui-monospace,monospace" font-size="22"
+          fill="#B57BFF">0</text>
+      </svg>

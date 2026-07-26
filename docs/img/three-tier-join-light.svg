@@ -1,0 +1,24 @@
+<svg viewBox="-16.0 -16.0 652.0 242.0" width="652.0" height="242.0" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Keys pass through three tiers: exact match, then fuzzy match, then the model on whatever remains, with a validation gate that discards invented keys and reused matches"><rect x="-16.0" y="-16.0" width="652.0" height="242.0" fill="#F4F0E8"/>
+        <g font-family="ui-monospace,monospace" font-size="9" fill="#1A1420">
+          <rect x="0" y="20" width="620" height="26" fill="#EAE4D8" stroke="#1A1420" stroke-width="1"/>
+          <text x="10" y="37">1 · EXACT — normalised, case and spacing folded</text>
+          <text x="470" y="37" opacity=".55">most of them</text>
+
+          <rect x="90" y="62" width="530" height="26" fill="#EAE4D8" stroke="#1A1420" stroke-width="1"/>
+          <text x="100" y="79">2 · FUZZY — typos, suffixes, transposed words</text>
+          <text x="470" y="79" opacity=".55">the leftovers</text>
+
+          <rect x="300" y="104" width="320" height="26" fill="#EAE4D8"
+            stroke="#6B3FBF" stroke-width="2"/>
+          <text x="310" y="121" fill="#6B3FBF">3 · THE MODEL — only what is still unmatched</text>
+
+          <rect x="300" y="146" width="320" height="26" fill="none"
+            stroke="#1A1420" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="310" y="163">validated: invented keys and reused rows dropped</text>
+
+          <text x="0" y="196" opacity=".6">EACH TIER ONLY SEES WHAT THE ONE ABOVE COULD NOT SOLVE</text>
+        </g>
+        <g stroke="#1A1420" stroke-width="1" fill="none" opacity=".45">
+          <path d="M90 46 L90 62"/><path d="M300 88 L300 104"/><path d="M460 130 L460 146"/>
+        </g>
+      </svg>
