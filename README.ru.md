@@ -74,24 +74,10 @@
   <img alt="Слева: тринадцать связанных code-нод n8n и redis-машина состояний, питающие три фиксированных режима. Справа: один tool-calling агент со своими инструментами и без машины состояний" src="docs/img/thirteen-nodes-one-agent-light.svg" width="100%">
 </picture>
 
-```mermaid
-flowchart TD
-    U([Пользователь в Telegram])
-    U -->|загрузка .xlsx / .xls / .csv| ROUTER[роутер aiogram long-poll]
-    U -->|текст / кнопка| ROUTER
-
-    ROUTER -->|свободный текст| AGENT[CRUD-агент<br/>OpenAI tool-calling]
-    AGENT -->|инструменты чтения/записи/итогов| SHEETS[(core.sheets<br/>книга openpyxl)]
-
-    ROUTER -->|мастер «Реформат»| REF[шаблон + данные]
-    ROUTER -->|мастер «Сравнение»| CMP[файл A + файл B]
-
-    REF --> PLAN[LLM table_plan]
-    CMP --> PLAN
-    PLAN --> ENGINE[Детерминированный движок<br/>извлечь · сопоставить · сверить]
-    ENGINE -->|реформатированный .xlsx| U
-    ENGINE -->|отчёт-сравнение .xlsx +<br/>топ расхождений в чат| U
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/architecture-dark.svg">
+  <img alt="Один long-poll процесс: роутер сперва отсекает нажатия кнопок, чтобы они не доходили до модели, свободный текст отдаёт tool-calling агенту поверх книги этого чата, а шаги мастеров ведёт через план от модели в детерминированный движок, который возвращает файл" src="docs/img/architecture-light.svg" width="100%">
+</picture>
 
 ## Возможности
 

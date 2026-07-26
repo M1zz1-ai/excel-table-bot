@@ -77,24 +77,10 @@ not shrink the state machine — it removed it, because the agent *is* the route
   <img alt="Left: thirteen connected n8n code nodes plus a redis state machine feeding three fixed modes. Right: one tool-calling agent with its sheet tools and no state machine at all" src="docs/img/thirteen-nodes-one-agent-light.svg" width="100%">
 </picture>
 
-```mermaid
-flowchart TD
-    U([User in Telegram])
-    U -->|upload .xlsx / .xls / .csv| ROUTER[aiogram long-poll router]
-    U -->|text / button press| ROUTER
-
-    ROUTER -->|free-form text| AGENT[CRUD agent<br/>OpenAI tool-calling]
-    AGENT -->|read/write/append/stats tools| SHEETS[(core.sheets<br/>openpyxl workbook)]
-
-    ROUTER -->|Reformat wizard| REF[template + data]
-    ROUTER -->|Compare wizard| CMP[file A + file B]
-
-    REF --> PLAN[LLM table_plan]
-    CMP --> PLAN
-    PLAN --> ENGINE[Deterministic engine<br/>extract · map · match · diff]
-    ENGINE -->|reformatted .xlsx| U
-    ENGINE -->|compare report .xlsx +<br/>top discrepancies in chat| U
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/img/architecture-dark.svg">
+  <img alt="One long-poll process: the router classifies button presses so they never reach the model, sends free-form text to the tool-calling agent over the chat's workbook, and routes wizard steps through a plan from the model into the deterministic engine, which returns a file" src="docs/img/architecture-light.svg" width="100%">
+</picture>
 
 ## Features
 

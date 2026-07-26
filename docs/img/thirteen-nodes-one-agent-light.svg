@@ -41,7 +41,7 @@
           <text x="366" y="88">list_sheets</text><text x="458" y="88">read_range</text>
           <text x="366" y="111">column_stats</text><text x="458" y="111">write_cell</text>
           <text x="366" y="134">append_row</text><text x="458" y="134">write_row</text>
-          <text x="366" y="157">reformat &middot; compare wizards</text>
+          <text x="366" y="157">reformat · compare wizards</text>
         </g>
         <text x="360" y="182" font-family="ui-monospace,monospace" font-size="9"
           fill="#1A1420" opacity=".55">no state machine · no modes</text>

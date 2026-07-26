@@ -319,7 +319,73 @@
 </section>
 
 <section>
-  <div class="rail"><span class="mark"></span><b>07</b>build</div>
+  <div class="rail"><span class="mark"></span><b>07</b>structure</div>
+  <div class="col">
+    <h2>One process, three ways in, one file out</h2>
+    <p class="dim">The router is the only thing that reads a message. What it
+    decides first is whether the message is a button — because a button must
+    never become a prompt — and only then whether the rest is a sentence for the
+    agent or a step in a wizard.</p>
+    <figure>
+      <svg viewBox="0 0 620 380" role="img" aria-label="A Telegram message enters one systemd process; the router first classifies button presses so they never reach the model, sends free text to the tool-calling agent over the chat's workbook, and routes wizard steps through a plan from the model into the deterministic engine, which returns a file">
+        <defs><marker id="ae" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+          <path d="M0 0 L7 3.5 L0 7 z" fill="currentColor"/></marker></defs>
+        <g font-family="ui-monospace,monospace" font-size="9" fill="currentColor">
+          <use href="#i-tg" x="0" y="4" width="12" height="12" opacity=".85"/>
+          <text x="18" y="14" opacity=".85">TELEGRAM</text>
+          <line x1="0" y1="20" x2="110" y2="20" stroke="currentColor" stroke-width="1"/>
+          <text x="0" y="36" opacity=".5">a file, a sentence, or a button</text>
+
+          <rect x="0" y="60" width="620" height="176" fill="none" stroke="var(--violet)" stroke-width="1"/>
+          <use href="#i-py" x="10" y="66" width="12" height="12" color="var(--violet)"/>
+          <text x="28" y="76" fill="var(--violet)">python -m excel · one long-poll process</text>
+
+          <rect x="14" y="92" width="180" height="32" fill="var(--raised)" stroke="currentColor" stroke-width="1"/>
+          <text x="24" y="112">router</text>
+
+          <rect x="14" y="152" width="180" height="42" fill="var(--raised)" stroke="var(--violet)" stroke-width="2"/>
+          <text x="24" y="170" fill="var(--violet)">classify_button</text>
+          <text x="24" y="184" fill="var(--violet)" opacity=".75">stops here — no model</text>
+
+          <rect x="220" y="152" width="180" height="42" fill="var(--raised)" stroke="currentColor" stroke-width="1"/>
+          <text x="230" y="170">the agent</text>
+          <text x="230" y="184" opacity=".55">7 tools over the workbook</text>
+
+          <rect x="426" y="152" width="180" height="42" fill="var(--raised)" stroke="currentColor" stroke-width="1"/>
+          <text x="436" y="170">a plan from the model</text>
+          <text x="436" y="184" opacity=".55">header · columns · join key</text>
+
+          <rect x="220" y="206" width="180" height="22" fill="var(--raised)" stroke="currentColor" stroke-width="1"/>
+          <text x="230" y="221">one workbook per chat</text>
+
+          <rect x="426" y="206" width="180" height="22" fill="var(--raised)" stroke="currentColor" stroke-width="1"/>
+          <text x="436" y="221">deterministic engine</text>
+
+          <text x="220" y="276" opacity=".85">A FILE, BACK IN THE CHAT</text>
+          <line x1="220" y1="282" x2="420" y2="282" stroke="currentColor" stroke-width="1"/>
+          <text x="220" y="298" opacity=".5">edited in place, or reformatted, or a comparison report</text>
+
+          <text x="0" y="338" opacity=".6">THE MODEL PICKS WHAT TO DO AND WHERE</text>
+          <text x="0" y="356" opacity=".6">EVERY ROW IS TOUCHED BY PYTHON</text>
+        </g>
+        <g stroke="currentColor" stroke-width="1.5" fill="none" marker-end="url(#ae)" opacity=".85">
+          <path d="M55 40 L55 92"/>
+          <path d="M104 124 L104 152"/>
+          <path d="M194 108 L310 108 L310 152"/>
+          <path d="M194 108 L516 108 L516 152"/>
+          <path d="M310 194 L310 206"/>
+          <path d="M516 194 L516 206"/>
+          <path d="M310 228 L310 262"/>
+          <path d="M516 228 L516 250 L360 250 L360 262"/>
+        </g>
+      </svg>
+      <figcaption>the first decision the router makes is "is this even a prompt?"</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="rail"><span class="mark"></span><b>08</b>build</div>
   <div class="col">
     <h2>125 tests, zero network calls</h2>
     <p class="dim">Telegram, OpenAI and the filesystem are all faked at the
